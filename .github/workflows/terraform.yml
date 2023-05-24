@@ -23,8 +23,9 @@ jobs:
       - name: Terraform Init
         run: terraform -chdir=deployments init
 
-      - name: Terraform Format
-        run: terraform -chdir=deployments fmt -check
+      # Had some issues with exit code 3, So I decided to ignore this step (https://github.com/hashicorp/terraform/issues/31543)
+      # - name: Terraform Format
+      #   run: terraform -chdir=deployments fmt -check
 
       - name: Set outputs
         id: vars
