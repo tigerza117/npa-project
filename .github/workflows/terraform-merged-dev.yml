@@ -3,6 +3,7 @@ name: "Deploy Pull Request Development Branch"
 on:
   pull_request:
     branches: ["dev"]
+    types: ["closed"]
 
 permissions:
   contents: read
@@ -42,9 +43,9 @@ jobs:
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
 
-      - name: Terraform Apply
+      - name: Terraform Destroy
         run: |
-          terraform -chdir=deployments apply \
+          terraform -chdir=deployments destroy \
             -auto-approve \
             -input=false \
             -var branch_prefix=Preview \
@@ -55,5 +56,6 @@ jobs:
       - name: Save Preview State
         uses: actions/upload-artifact@v3
         with:
-          name: preview-terraform-state
-          path: deployments/terraform.tfstate
+            name: preview-terraform-state
+            path: deployments/terraform.tfstate
+
