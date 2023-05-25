@@ -21,12 +21,16 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Set outputs
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Get Preview State
         id: download-artifact
         uses: dawidd6/action-download-artifact@v2
         with:
           github_token: ${{ secrets.T_TOKEN }}
-          name: preview-terraform-state
+          name: preview-${{ steps.vars.outputs.sha_short }}-terraform-state
           workflow: terraform-pr-dev.yml
           path: deployments
           if_no_artifact_found: ignore
