@@ -30,6 +30,7 @@ jobs:
           if_no_artifact_found: ignore
 
       - name: Terraform Init
+        if: steps.download-artifact.outcome == 'success'
         run: terraform -chdir=deployments init
 
       - name: Terraform Plan
