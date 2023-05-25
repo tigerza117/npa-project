@@ -31,11 +31,14 @@ jobs:
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
+      - name: Select Terraform Workspace
+        run: terraform -chdir=deployments workspace select preview
+
       - name: Terraform Plan
         run: |
           terraform -chdir=deployments plan \
             -input=false \
-            -var branch_prefix=${{ steps.vars.outputs.sha_short }} \
+            -var branch_prefix=Preview \
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
@@ -45,7 +48,7 @@ jobs:
           terraform -chdir=deployments apply \
             -auto-approve \
             -input=false \
-            -var branch_prefix=${{ steps.vars.outputs.sha_short }} \
+            -var branch_prefix=Preview \
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \

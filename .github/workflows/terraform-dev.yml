@@ -1,4 +1,4 @@
-name: "Deploy Pull Request Development Branch"
+name: "Deploy Development Branch"
 
 on:
   push:
@@ -31,6 +31,9 @@ jobs:
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
+      - name: Select Terraform Workspace
+        run: terraform -chdir=deployments workspace select dev
+
       - name: Terraform Plan
         run: |
           terraform -chdir=deployments plan \
@@ -40,7 +43,7 @@ jobs:
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
 
-      - name: Terraform Plan
+      - name: Terraform Apply
         run: |
           terraform -chdir=deployments apply \
             -auto-approve \
