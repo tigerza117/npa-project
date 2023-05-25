@@ -26,6 +26,7 @@ jobs:
         with:
           github_token: ${{ secrets.T_TOKEN }}
           name: preview-terraform-state
+          path: deployments
           if_no_artifact_found: ignore
 
       - name: Terraform Init
