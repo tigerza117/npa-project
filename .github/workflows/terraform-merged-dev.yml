@@ -1,4 +1,4 @@
-name: "Deploy Pull Request Development Branch"
+name: "Destroy on PR Close Development Branch"
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   deploy-terraform:
-    name: "Terraform Deployments"
+    name: "Terraform Resource Destroy"
     runs-on: ubuntu-latest
     environment: development
 
@@ -27,6 +27,7 @@ jobs:
         with:
           github_token: ${{ secrets.T_TOKEN }}
           name: preview-terraform-state
+          workflow: terraform-pr-dev.yml
           path: deployments
           if_no_artifact_found: ignore
 
@@ -37,6 +38,7 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform -chdir=deployments plan \
+            -destroy \
             -input=false \
             -var branch_prefix=Preview \
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
@@ -45,17 +47,10 @@ jobs:
 
       - name: Terraform Destroy
         run: |
-          terraform -chdir=deployments destroy \
+          terraform -chdir=deployments apply -destroy \
             -auto-approve \
             -input=false \
             -var branch_prefix=Preview \
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
-
-      - name: Save Preview State
-        uses: actions/upload-artifact@v3
-        with:
-            name: preview-terraform-state
-            path: deployments/terraform.tfstate
-
