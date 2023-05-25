@@ -20,12 +20,18 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: Terraform Init
-        run: terraform -chdir=deployments init
+      - name: Get Production State
+        id: download-artifact
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          github_token: ${{ secrets.T_TOKEN }}
+          name: production-terraform-state
+          path: deployments
+          if_no_artifact_found: ignore
 
-      - name: Set outputs
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Terraform Init
+        if: steps.download-artifact.outcome == 'success'
+        run: terraform -chdir=deployments init
 
       - name: Terraform Plan
         run: |
@@ -45,3 +51,9 @@ jobs:
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
+
+      - name: Save Production State
+        uses: actions/upload-artifact@v3
+        with:
+          name: production-terraform-state
+          path: deployments/terraform.tfstate
