@@ -31,9 +31,6 @@ jobs:
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Select Terraform Workspace
-        run: terraform -chdir=deployments workspace select stage
-
       - name: Terraform Plan
         run: |
           terraform -chdir=deployments plan \
