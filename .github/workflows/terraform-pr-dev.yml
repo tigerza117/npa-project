@@ -20,10 +20,10 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      # - name: Get Preview State
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: preview-terraform-state
+      - name: Get Preview State
+        uses: actions/download-artifact@v3
+        with:
+          name: preview-terraform-state
 
       - name: Terraform Init
         run: terraform -chdir=deployments init
