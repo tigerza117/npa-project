@@ -20,16 +20,13 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      - name: Get Preview State
+        uses: actions/download-artifact@v3
+        with:
+          name: preview-terraform-state
+
       - name: Terraform Init
         run: terraform -chdir=deployments init
-
-      # Had some issues with exit code 3, So I decided to ignore this step (https://github.com/hashicorp/terraform/issues/31543)
-      # - name: Terraform Format
-      #   run: terraform -chdir=deployments fmt -check
-
-      - name: Set outputs
-        id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Terraform Plan
         run: |
@@ -50,6 +47,12 @@ jobs:
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
+
+      - name: Save Preview State
+        uses: actions/upload-artifact@v3
+        with:
+          name: preview-terraform-state
+          path: deployments/terraform.tfstate
 
       - name: Terraform Destroy
         if: github.event.action == 'closed'
