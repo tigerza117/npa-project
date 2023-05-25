@@ -66,6 +66,7 @@ resource "aws_route_table_association" "public_route_association" {
 resource "aws_security_group" "default" {
   name        = "${var.branch_prefix} Security Group"
   description = "Allows SSH access from anywhere and HTTP access from the internet."
+  vpc_id      = aws_vpc.main.id
 
   ingress {
     protocol    = "tcp"
