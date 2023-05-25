@@ -13,6 +13,21 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_default_security_group" "default" {
+  vpc_id      = aws_vpc.main.id
+
+  egress {
+    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 65535
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.branch_prefix} Security Group"
+  }
+}
+
 resource "aws_subnet" "public" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.0.0/24"
@@ -61,32 +76,6 @@ resource "aws_route_table_association" "public_route_association" {
   subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public_route.id
   depends_on     = [aws_subnet.public, aws_route_table.public_route]
-}
-
-resource "aws_security_group" "default" {
-  name        = "${var.branch_prefix} Security Group"
-  description = "Allows SSH access from anywhere and HTTP access from the internet."
-  vpc_id      = aws_vpc.main.id
-
-  ingress {
-    protocol    = "tcp"
-    from_port   = 22
-    to_port     = 22
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    protocol    = "tcp"
-    from_port   = 80
-    to_port     = 80
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    protocol    = "tcp"
-    from_port   = 0
-    to_port     = 65535
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
 
 output "vpc" {
