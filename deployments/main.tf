@@ -14,8 +14,6 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_default_security_group" "default" {
-  name        = "${var.branch_prefix} Security Group"
-  description = "Allows SSH access from anywhere and HTTP access from the internet."
   vpc_id      = aws_vpc.main.id
 
   egress {
@@ -23,6 +21,10 @@ resource "aws_default_security_group" "default" {
     from_port   = 0
     to_port     = 65535
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.branch_prefix} Security Group"
   }
 }
 
