@@ -38,6 +38,7 @@ jobs:
           terraform -chdir=deployments plan \
             -input=false \
             -var branch_prefix=Production \
+            -var aws_account_id=${{ secrets.AWS_ACCOUNT_ID }} \
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
@@ -48,6 +49,7 @@ jobs:
             -auto-approve \
             -input=false \
             -var branch_prefix=Production \
+            -var aws_account_id=${{ secrets.AWS_ACCOUNT_ID }} \
             -var aws_access_key=${{ secrets.AWS_ACCESS_KEY }} \
             -var aws_secret_key=${{ secrets.AWS_SECRET_KEY }} \
             -var aws_session_token=${{ secrets.AWS_SESSION_TOKEN }} \
