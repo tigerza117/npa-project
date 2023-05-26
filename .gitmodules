@@ -1,0 +1,3 @@
+[submodule "regit-frontend"]
+	path = regit-frontend
+	url = git@github.com:tigerza117/regit-frontend.git
