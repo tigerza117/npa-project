@@ -34,6 +34,16 @@ resource "aws_security_group_rule" "noice-nodegroup-ingress-cluster" {
   type                     = "ingress"
 }
 
+resource "aws_security_group_rule" "noice-nodegroup-ingress-http" {
+  description              = "Allow pods to communicate with the cluster API Server"
+  from_port                = 80
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.noice-nodegroup.id
+  source_security_group_id = aws_security_group.regit-eks.id
+  to_port                  = 80
+  type                     = "ingress"
+}
+
 resource "aws_security_group_rule" "noice-nodegroup-ingress-https" {
   description              = "Allow pods to communicate with the cluster API Server"
   from_port                = 443
